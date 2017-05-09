@@ -14,6 +14,9 @@
 		C08D9A141EBF56CD00355598 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C08D9A121EBF56CD00355598 /* LaunchScreen.storyboard */; };
 		C08D9A1D1EBF58B900355598 /* loginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08D9A1C1EBF58B900355598 /* loginController.swift */; };
 		C08D9A1F1EBFAD0600355598 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C08D9A1E1EBFAD0600355598 /* GoogleService-Info.plist */; };
+		C0D6FE921EC1CD9200FD531D /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D6FE911EC1CD9200FD531D /* NewMessageController.swift */; };
+		C0D6FE951EC1D5F900FD531D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D6FE941EC1D5F900FD531D /* User.swift */; };
+		C0D6FE971EC1EE0100FD531D /* LoginController+handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D6FE961EC1EE0100FD531D /* LoginController+handlers.swift */; };
 		EBDD59687024157696EE4659 /* Pods_gameofchats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC0911A8D67F4169C6C7F4E /* Pods_gameofchats.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +31,9 @@
 		C08D9A151EBF56CD00355598 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C08D9A1C1EBF58B900355598 /* loginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = loginController.swift; sourceTree = "<group>"; };
 		C08D9A1E1EBFAD0600355598 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C0D6FE911EC1CD9200FD531D /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
+		C0D6FE941EC1D5F900FD531D /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		C0D6FE961EC1EE0100FD531D /* LoginController+handlers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LoginController+handlers.swift"; sourceTree = "<group>"; };
 		E09EF6C5117807F06362E742 /* Pods-gameofchats.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gameofchats.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gameofchats/Pods-gameofchats.debug.xcconfig"; sourceTree = "<group>"; };
 		FEC0911A8D67F4169C6C7F4E /* Pods_gameofchats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gameofchats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -82,6 +88,7 @@
 		C08D9A081EBF56CD00355598 /* gameofchats */ = {
 			isa = PBXGroup;
 			children = (
+				C0D6FE931EC1D5DB00FD531D /* Model */,
 				C08D9A1B1EBF588D00355598 /* Controller */,
 				C08D9A091EBF56CD00355598 /* AppDelegate.swift */,
 				C08D9A0D1EBF56CD00355598 /* Main.storyboard */,
@@ -97,9 +104,19 @@
 			isa = PBXGroup;
 			children = (
 				C08D9A1C1EBF58B900355598 /* loginController.swift */,
+				C0D6FE961EC1EE0100FD531D /* LoginController+handlers.swift */,
 				C08D9A0B1EBF56CD00355598 /* MessagesController.swift */,
+				C0D6FE911EC1CD9200FD531D /* NewMessageController.swift */,
 			);
 			name = Controller;
+			sourceTree = "<group>";
+		};
+		C0D6FE931EC1D5DB00FD531D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C0D6FE941EC1D5F900FD531D /* User.swift */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -227,8 +244,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0D6FE921EC1CD9200FD531D /* NewMessageController.swift in Sources */,
 				C08D9A1D1EBF58B900355598 /* loginController.swift in Sources */,
+				C0D6FE971EC1EE0100FD531D /* LoginController+handlers.swift in Sources */,
 				C08D9A0C1EBF56CD00355598 /* MessagesController.swift in Sources */,
+				C0D6FE951EC1D5F900FD531D /* User.swift in Sources */,
 				C08D9A0A1EBF56CD00355598 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
