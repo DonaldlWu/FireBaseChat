@@ -11,6 +11,13 @@ import Firebase
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate {
     
+    var user: User? {
+        didSet {
+            navigationItem.title = user?.name
+        }
+    }
+    
+    
     lazy var inputTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Enter message..."
@@ -22,7 +29,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Chat Log Controller"
+//        navigationItem.title = "Chat Log Controller"
         
         collectionView?.backgroundColor = UIColor.white
         
@@ -76,10 +83,18 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
     }
     
     func handleSend() {
-        let ref = FIRDatabase.database().reference().child("message")
-        let childRef = ref.childByAutoId()
-        let value = ["text": inputTextField.text!, "name": "Mei"]
-        childRef.updateChildValues(value)
+        if inputTextField.text?.characters.count != 0 {
+            let ref = FIRDatabase.database().reference().child("message")
+            let childRef = ref.childByAutoId()
+            let toId = user!.id!
+            let fromId = FIRAuth.auth()!.currentUser!.uid
+            let timestamp: NSNumber = (NSNumber(value: Int(NSDate().timeIntervalSince1970)))
+            let value: [String : Any] = ["text": inputTextField.text!, "toId": toId, "fromId": fromId, "timestamp": timestamp]
+            childRef.updateChildValues(value)
+            print("Send Message to Firebase")
+        } else {
+            print("No message there")
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

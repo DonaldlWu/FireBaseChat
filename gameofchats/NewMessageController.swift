@@ -31,6 +31,7 @@ class NewMessageController: UITableViewController {
             
             if let dictionary  = snapshot.value as? [String: AnyObject] {
                 let user = User()
+                user.id = snapshot.key
                 
                 // if you use this setter, your app will crash if your class properties don't exactly match up with firebase dictionary keys
                 user.setValuesForKeys(dictionary)
@@ -82,6 +83,15 @@ class NewMessageController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
+    }
+ 
+    var messageController: MessagesController?
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true, completion: nil)
+        print("dismiss")
+        let user = self.user[indexPath.row]
+        self.messageController?.showChatControllerForUser(user: user)
     }
     
 }
