@@ -62,9 +62,12 @@ extension loginController: UIImagePickerControllerDelegate, UINavigationControll
                 }
                 // Successfully authenticated user and save data
                 let imageName = NSUUID().uuidString
-                let storageRef = FIRStorage.storage().reference().child("profile_image").child("\(imageName).png")
+                let storageRef = FIRStorage.storage().reference().child("profile_image").child("\(imageName).jpg")
                 
-                if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!) {
+                if let profileImage = self.profileImageView.image, let uploadData = UIImageJPEGRepresentation(profileImage, 0.1) {
+                
+//                if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1) {
+//                if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!) {
                     storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                         
                         if error != nil {
@@ -88,7 +91,15 @@ extension loginController: UIImagePickerControllerDelegate, UINavigationControll
             in
             if err != nil {
                 print(err!)
+                return
             }
+            
+//            self.messageController?.fetchUserAndSetupNavBarTitle()
+//            self.messageController?.navigationItem.title = value["name"] as? String
+            let user = User()
+            //this setter potentially crasher if key don't match
+            user.setValuesForKeys(value)
+            self.messageController?.setupNavBarWithUser(user: user)
             self.dismiss(animated: true, completion: nil)
         })
     
