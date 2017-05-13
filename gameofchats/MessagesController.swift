@@ -18,16 +18,59 @@ class MessagesController: UITableViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(handleNewMessage))
+        
         checkIfUserIsLoggedIn()
         
         tableView.register(UserCell.self, forCellReuseIdentifier: "cellId")
         
-        observerMessage()
+//        observerMessage()
         
     }
     
     var message = [Message]()
     var messagesDictionary = [String: Message]()
+    
+    func observeUserMessages() {
+        
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+        
+        let ref = FIRDatabase.database().reference().child("user-messages").child(uid)
+        ref.observe(.childAdded, with: { (snapshot) in
+            
+            let messageId = snapshot.key
+            let messageReference = FIRDatabase.database().reference().child("message").child(messageId)
+            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+                
+                if let dictionary = snapshot.value as? [String: AnyObject] {
+                    let message = Message()
+                    message.setValuesForKeys(dictionary)
+                    //                self.message.append(message)
+                    
+                    if let toId = message.toId {
+                        self.messagesDictionary[toId] = message
+                        
+                        self.message = Array(self.messagesDictionary.values)
+                        
+                        self.message.sort(by: { (message1, message2) -> Bool in
+                            
+                            return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
+                        })
+                        
+                    }
+                    
+                    // this will crash because of background thresad, so lets call this on dispatch_async main thread
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            }, withCancel: nil)
+            
+        }, withCancel: nil)
+        
+    
+    }
     
     
     func observerMessage() {
@@ -118,6 +161,11 @@ class MessagesController: UITableViewController {
     }
     
     func setupNavBarWithUser(user: User) {
+        
+        message.removeAll()
+        messagesDictionary.removeAll()
+        tableView.reloadData()
+        observeUserMessages()
         
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)

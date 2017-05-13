@@ -90,7 +90,22 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
             let fromId = FIRAuth.auth()!.currentUser!.uid
             let timestamp: NSNumber = (NSNumber(value: Int(NSDate().timeIntervalSince1970)))
             let value: [String : Any] = ["text": inputTextField.text!, "toId": toId, "fromId": fromId, "timestamp": timestamp]
-            childRef.updateChildValues(value)
+//            childRef.updateChildValues(value)
+            childRef.updateChildValues(value, withCompletionBlock: { (error, ref) in
+                if error != nil {
+                    print(error!)
+                    return
+                }
+                
+                let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(fromId)
+                let messageId = childRef.key
+                userMessagesRef.updateChildValues([messageId: 1])
+                
+                let recipientUserMessagesRef = FIRDatabase.database().reference().child("user-messages").child(toId)
+                recipientUserMessagesRef.updateChildValues([messageId: 1])
+                
+            })
+            
             print("Send Message to Firebase")
         } else {
             print("No message there")
