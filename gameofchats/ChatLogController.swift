@@ -78,8 +78,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let start = CGPoint(x: 0, y: (collectionView?.contentSize.height)! - (collectionView?.frame.size.height)! + 32)
-        collectionView?.setContentOffset(start, animated: false)
+        let startFromBottom = CGPoint(x: 0, y: (collectionView?.contentSize.height)! - (collectionView?.frame.size.height)! + 32)
+        collectionView?.setContentOffset(startFromBottom, animated: true)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
