@@ -48,8 +48,8 @@ class MessagesController: UITableViewController {
                     message.setValuesForKeys(dictionary)
                     //                self.message.append(message)
                     
-                    if let toId = message.toId {
-                        self.messagesDictionary[toId] = message
+                    if let chatPartnerId = message.chatPartnerId() {
+                        self.messagesDictionary[chatPartnerId] = message
                         
                         self.message = Array(self.messagesDictionary.values)
                         
