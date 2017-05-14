@@ -14,9 +14,7 @@ class UserCell: UITableViewCell {
     
     var message: Message? {
         didSet {
-            
             setUpNameAndProfileImage()
-            
             detailTextLabel?.text = message?.text
             
             if let second = message?.timestamp?.doubleValue {
@@ -26,22 +24,12 @@ class UserCell: UITableViewCell {
                 dateFormatter.dateFormat = "hh:mm:ss a"
                 timeLabel.text = dateFormatter.string(from: timestampDate as Date)
             }
-            
-            
         }
     }
     
     private func setUpNameAndProfileImage() {
         
-        let chatPartnerId: String?
-        
-        if message?.fromId == FIRAuth.auth()?.currentUser?.uid {
-            chatPartnerId = message?.toId
-        } else {
-            chatPartnerId = message?.fromId
-        }
-        
-        if let id = chatPartnerId {
+        if let id = message?.chatPartnerId() {
             let ref = FIRDatabase.database().reference().child("users").child(id)
             ref.observe(.value, with: { (snapshot) in
                 
@@ -51,9 +39,7 @@ class UserCell: UITableViewCell {
                     if let profileImageUrl = dictionary["profileImageUrl"] as? String {
                         self.profileImageView.loadImageUsingCasheWithUrlString(urlString: profileImageUrl)
                     }
-                    
                 }
-                
             }, withCancel: nil)
         }
     }
