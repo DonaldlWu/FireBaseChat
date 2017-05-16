@@ -21,11 +21,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     var messages = [Message]()
     
     func observeMessage() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid, let toId = user?.id else {
             return
         }
         
-        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(uid)
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(uid).child(toId)
         userMessagesRef.observe(.childAdded, with: { (snapshot) in
             
             let messageId = snapshot.key
@@ -40,14 +40,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 let message = Message()
                 // potential of crashing if keys don't match
                 message.setValuesForKeys(dictionary)
-                
-                if message.chatPartnerId() == self.user?.id {
-                    self.messages.append(message)
-                    DispatchQueue.main.async {
-                        self.collectionView?.reloadData()
-                    }
-                }
-                
                 
             }, withCancel: nil)
             
@@ -67,7 +59,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        collectionView?.translatesAutoresizingMaskIntoConstraints = false
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
 //        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
         collectionView?.alwaysBounceVertical = true
@@ -179,7 +171,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         let message = messages[indexPath.item]
         cell.textView.text = message.text
-        
         setupCell(cell: cell, message: message)
         
         //let modify the bubbleView width
@@ -297,11 +288,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 }
                 
                 self.inputTextField.text = nil
-                let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(fromId)
+                let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(fromId).child(toId)
                 let messageId = childRef.key
                 userMessagesRef.updateChildValues([messageId: 1])
                 
-                let recipientUserMessagesRef = FIRDatabase.database().reference().child("user-messages").child(toId)
+                let recipientUserMessagesRef = FIRDatabase.database().reference().child("user-messages").child(toId).child(fromId)
                 recipientUserMessagesRef.updateChildValues([messageId: 1])
                 
             })

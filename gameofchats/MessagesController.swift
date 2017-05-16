@@ -28,49 +28,54 @@ class MessagesController: UITableViewController {
     var messagesDictionary = [String: Message]()
     
     func observeUserMessages() {
-        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
-        
         let ref = FIRDatabase.database().reference().child("user-messages").child(uid)
         ref.observe(.childAdded, with: { (snapshot) in
-            
-            let messageId = snapshot.key
-            let messageReference = FIRDatabase.database().reference().child("message").child(messageId)
-            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+            let userId = snapshot.key
+            FIRDatabase.database().reference().child("user-messages").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
+                let messageId = snapshot.key
+                self.fetchMessageWithMessageId(messageId: messageId)
                 
-                if let dictionary = snapshot.value as? [String: AnyObject] {
-                    let message = Message()
-                    message.setValuesForKeys(dictionary)
-                    //                self.message.append(message)
-                    
-                    if let chatPartnerId = message.chatPartnerId() {
-                        self.messagesDictionary[chatPartnerId] = message
-                        
-                        self.message = Array(self.messagesDictionary.values)
-                        
-                        self.message.sort(by: { (message1, message2) -> Bool in
-                            
-                            return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
-                        })
-                    }
-                    self.timer?.invalidate()
-                    //print("We just canceled our timer")
-                    self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
-                    //print("We schedule a table in 0.1 sec")
-                }
             }, withCancel: nil)
             
         }, withCancel: nil)
     }
     
+    private func fetchMessageWithMessageId(messageId: String) {
+        let messageReference = FIRDatabase.database().reference().child("message").child(messageId)
+        messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                
+                if let chatPartnerId = message.chatPartnerId() {
+                    self.messagesDictionary[chatPartnerId] = message
+                }
+                self.attemptReloadTable()
+            }
+            
+        }, withCancel: nil)
+    }
+    
+    private func attemptReloadTable() {
+        self.timer?.invalidate()
+        //print("We just canceled our timer")
+        self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+        //print("We schedule a table in 0.1 sec")
+    }
+    
     var timer: Timer?
     
     func handleReloadTable() {
+        self.message = Array(self.messagesDictionary.values)
+        self.message.sort(by: { (message1, message2) -> Bool in
+            return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
+        })
         // this will crash because of background thresad, so lets call this on dispatch_async main thread
         DispatchQueue.main.async {
-            print("We reloaded the table")
             self.tableView.reloadData()
         }
     }
@@ -104,7 +109,6 @@ class MessagesController: UITableViewController {
         
         let ref = FIRDatabase.database().reference().child("users").child(chatPartnerId)
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
-            print(snapshot)
             guard let dictionary = snapshot.value as? [String: AnyObject] else {
                 return
             }
