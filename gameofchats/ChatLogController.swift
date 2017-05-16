@@ -31,8 +31,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             let messageId = snapshot.key
             let messagesRef = FIRDatabase.database().reference().child("message").child(messageId)
             messagesRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                //print(snapshot)
-                
+
                 guard let dictionary = snapshot.value as? [String: AnyObject] else {
                     return
                 }
@@ -40,6 +39,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 let message = Message()
                 // potential of crashing if keys don't match
                 message.setValuesForKeys(dictionary)
+                self.messages.append(message)
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
+                }
+                
                 
             }, withCancel: nil)
             
