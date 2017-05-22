@@ -196,7 +196,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         uploadTask.observe(.progress) { (snapshot) in
             if let completedUnitCount = snapshot.progress?.completedUnitCount {
                 let completedUnitCountNumber = Int((Double(completedUnitCount) / fileSize) * 100)
-                self.navigationItem.title = "Uploading \(String(completedUnitCountNumber)) %"
+                self.navigationItem.title = "UPLOADING \(String(completedUnitCountNumber)) %"
             }
             
         }
@@ -325,17 +325,27 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         cell.chatLogController = self
         
         let message = messages[indexPath.item]
+        
+        cell.message = message
+        
         cell.textView.text = message.text
         setupCell(cell: cell, message: message)
         
         if let text = message.text {
             // text message
-            cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: text).width + 32
+            cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: text).width + 40
         } else if message.imageUrl != nil {
             //fall in here if its an image message
             cell.bubbleWidthAnchor?.constant = 200
             cell.textView.isHidden = true
         }
+        
+//        if message.videoUrl != nil {
+//            cell.playButton.isHidden = false
+//        } else {
+//            cell.playButton.isHidden = true
+//        }
+        cell.playButton.isHidden = message.videoUrl == nil
         
         return cell
     }
